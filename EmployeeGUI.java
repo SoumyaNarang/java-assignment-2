@@ -24,43 +24,110 @@ public class EmployeeGUI {
 
         JFrame frame = new JFrame("Employee Management System");
 
-        frame.setSize(700, 500);
+        frame.setSize(850, 600);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setLayout(new BorderLayout());
 
+        // MAIN PANEL
+
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+
+        mainPanel.setBorder(
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        );
+
+        // FONTS
+
+        Font titleFont = new Font("Arial", Font.BOLD, 28);
+
+        Font labelFont = new Font("Arial", Font.BOLD, 16);
+
+        Font textFont = new Font("Arial", Font.PLAIN, 15);
+
+        Font buttonFont = new Font("Arial", Font.BOLD, 14);
+
+        // TITLE LABEL
+
+        JLabel titleLabel = new JLabel(
+                "Employee Management System",
+                JLabel.CENTER
+        );
+
+        titleLabel.setFont(titleFont);
+
         // INPUT PANEL
 
-        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 15, 15));
 
-        inputPanel.add(new JLabel("ID:"));
+        inputPanel.setBackground(new Color(245, 245, 245));
 
-        idField = new JTextField();
+        inputPanel.setBorder(
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        );
+
+        JLabel idLabel = new JLabel("ID:");
+
+        idLabel.setFont(labelFont);
+
+        inputPanel.add(idLabel);
+
+        idField = new JTextField(20);
+
+        idField.setFont(textFont);
 
         inputPanel.add(idField);
 
-        inputPanel.add(new JLabel("Name:"));
+        JLabel nameLabel = new JLabel("Name:");
 
-        nameField = new JTextField();
+        nameLabel.setFont(labelFont);
+
+        inputPanel.add(nameLabel);
+
+        nameField = new JTextField(20);
+
+        nameField.setFont(textFont);
 
         inputPanel.add(nameField);
 
-        inputPanel.add(new JLabel("Department:"));
+        JLabel deptLabel = new JLabel("Department:");
 
-        deptField = new JTextField();
+        deptLabel.setFont(labelFont);
+
+        inputPanel.add(deptLabel);
+
+        deptField = new JTextField(20);
+
+        deptField.setFont(textFont);
 
         inputPanel.add(deptField);
 
-        inputPanel.add(new JLabel("Salary:"));
+        JLabel salaryLabel = new JLabel("Salary:");
 
-        salaryField = new JTextField();
+        salaryLabel.setFont(labelFont);
+
+        inputPanel.add(salaryLabel);
+
+        salaryField = new JTextField(20);
+
+        salaryField.setFont(textFont);
 
         inputPanel.add(salaryField);
 
+        // INPUT WRAPPER
+
+        JPanel inputWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        inputWrapper.setBackground(new Color(245, 245, 245));
+
+        inputWrapper.add(inputPanel);
+
         // BUTTON PANEL
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+
+        buttonPanel.setBackground(new Color(245, 245, 245));
 
         addButton = new JButton("Add");
 
@@ -70,6 +137,36 @@ public class EmployeeGUI {
 
         clearButton = new JButton("Clear");
 
+        Dimension buttonSize = new Dimension(120, 40);
+
+        addButton.setPreferredSize(buttonSize);
+
+        updateButton.setPreferredSize(buttonSize);
+
+        deleteButton.setPreferredSize(buttonSize);
+
+        clearButton.setPreferredSize(buttonSize);
+
+        addButton.setFont(buttonFont);
+
+        updateButton.setFont(buttonFont);
+
+        deleteButton.setFont(buttonFont);
+
+        clearButton.setFont(buttonFont);
+
+        addButton.setBackground(new Color(76, 175, 80));
+
+        updateButton.setBackground(new Color(255, 193, 7));
+
+        deleteButton.setBackground(new Color(244, 67, 54));
+
+        clearButton.setBackground(new Color(158, 158, 158));
+
+        addButton.setForeground(Color.WHITE);
+
+        deleteButton.setForeground(Color.WHITE);
+
         buttonPanel.add(addButton);
 
         buttonPanel.add(updateButton);
@@ -77,6 +174,18 @@ public class EmployeeGUI {
         buttonPanel.add(deleteButton);
 
         buttonPanel.add(clearButton);
+
+        // TOP PANEL
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+
+        topPanel.setBackground(new Color(245, 245, 245));
+
+        topPanel.add(titleLabel, BorderLayout.NORTH);
+
+        topPanel.add(inputWrapper, BorderLayout.CENTER);
+
+        topPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // TABLE
 
@@ -86,38 +195,81 @@ public class EmployeeGUI {
 
         table = new JTable(model);
 
+        table.setFont(textFont);
+
+        table.setRowHeight(30);
+
+        table.getTableHeader().setFont(labelFont);
+
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // ADD COMPONENTS TO FRAME
+        // ADD COMPONENTS TO MAIN PANEL
 
-        frame.add(inputPanel, BorderLayout.NORTH);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        frame.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        frame.add(buttonPanel, BorderLayout.SOUTH);
+        // ADD MAIN PANEL TO FRAME
+
+        frame.add(mainPanel);
+
+        // TABLE ROW SELECTION
+
+        table.getSelectionModel().addListSelectionListener(e -> {
+
+            int selectedRow = table.getSelectedRow();
+
+            if(selectedRow != -1) {
+
+                idField.setText(model.getValueAt(selectedRow, 0).toString());
+
+                nameField.setText(model.getValueAt(selectedRow, 1).toString());
+
+                deptField.setText(model.getValueAt(selectedRow, 2).toString());
+
+                salaryField.setText(model.getValueAt(selectedRow, 3).toString());
+            }
+        });
 
         // ADD BUTTON FUNCTIONALITY
 
         addButton.addActionListener(e -> {
 
-            int id = Integer.parseInt(idField.getText());
+            if(idField.getText().isEmpty() ||
+               nameField.getText().isEmpty() ||
+               deptField.getText().isEmpty() ||
+               salaryField.getText().isEmpty()) {
 
-            String name = nameField.getText();
+                JOptionPane.showMessageDialog(frame,
+                        "Please fill all fields");
 
-            String dept = deptField.getText();
+                return;
+            }
 
-            double salary = Double.parseDouble(salaryField.getText());
+            try {
 
-            employees.add(new Employee(id, name, dept, salary));
+                int id = Integer.parseInt(idField.getText());
 
-            model.addRow(new Object[]{id, name, dept, salary});
+                String name = nameField.getText();
 
-            clearFields();
+                String dept = deptField.getText();
+
+                double salary = Double.parseDouble(salaryField.getText());
+
+                employees.add(new Employee(id, name, dept, salary));
+
+                model.addRow(new Object[]{id, name, dept, salary});
+
+                clearFields();
+
+            }
+
+            catch(NumberFormatException ex) {
+
+                JOptionPane.showMessageDialog(frame,
+                        "ID must be integer and Salary must be numeric");
+            }
         });
-
-        // CLEAR BUTTON FUNCTIONALITY
-
-        clearButton.addActionListener(e -> clearFields());
 
         // UPDATE BUTTON FUNCTIONALITY
 
@@ -125,7 +277,26 @@ public class EmployeeGUI {
 
             int selectedRow = table.getSelectedRow();
 
-            if (selectedRow != -1) {
+            if(selectedRow == -1) {
+
+                JOptionPane.showMessageDialog(frame,
+                        "Please select a row to update");
+
+                return;
+            }
+
+            if(idField.getText().isEmpty() ||
+               nameField.getText().isEmpty() ||
+               deptField.getText().isEmpty() ||
+               salaryField.getText().isEmpty()) {
+
+                JOptionPane.showMessageDialog(frame,
+                        "Please fill all fields");
+
+                return;
+            }
+
+            try {
 
                 int id = Integer.parseInt(idField.getText());
 
@@ -152,6 +323,13 @@ public class EmployeeGUI {
                 model.setValueAt(salary, selectedRow, 3);
 
                 clearFields();
+
+            }
+
+            catch(NumberFormatException ex) {
+
+                JOptionPane.showMessageDialog(frame,
+                        "Invalid ID or Salary");
             }
         });
 
@@ -161,15 +339,28 @@ public class EmployeeGUI {
 
             int selectedRow = table.getSelectedRow();
 
-            if (selectedRow != -1) {
+            if(selectedRow == -1) {
 
-                employees.remove(selectedRow);
+                JOptionPane.showMessageDialog(frame,
+                        "Please select a row to delete");
 
-                model.removeRow(selectedRow);
-
-                clearFields();
+                return;
             }
+
+            employees.remove(selectedRow);
+
+            model.removeRow(selectedRow);
+
+            clearFields();
         });
+
+        // CLEAR BUTTON FUNCTIONALITY
+
+        clearButton.addActionListener(e -> clearFields());
+
+        // FRAME SETTINGS
+
+        frame.setLocationRelativeTo(null);
 
         frame.setVisible(true);
     }
